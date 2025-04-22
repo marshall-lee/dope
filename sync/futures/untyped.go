@@ -1,4 +1,4 @@
-package future
+package futures
 
 // UntypedInterface is useful when for example you need a collection of [Future]
 // objects with different type parameters.
