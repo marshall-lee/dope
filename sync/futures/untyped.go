@@ -1,3 +1,7 @@
+// Copyright 2024-2025 Vladimir Kochnev. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package futures
 
 // UntypedInterface is useful when for example you need a collection of [Future]
