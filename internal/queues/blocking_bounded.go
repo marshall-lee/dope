@@ -129,8 +129,8 @@ func (queue *BlockingBounded[T]) Close() (ok bool) {
 	queue.mu.Lock()
 	if ok = !queue.closed; ok {
 		queue.closed = true
-		queue.rCond.Signal()
-		queue.wCond.Signal()
+		queue.rCond.Broadcast()
+		queue.wCond.Broadcast()
 	}
 	queue.mu.Unlock()
 	return ok
