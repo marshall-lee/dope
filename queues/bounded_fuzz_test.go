@@ -11,11 +11,12 @@ import (
 )
 
 func FuzzBoundedPushPop(f *testing.F) {
-	for _, x := range bitmaps {
-		f.Add(x)
+	for _, capacity := range []int{1, 2, 4, 8, 16, 32} {
+		for _, x := range bitmaps {
+			f.Add(capacity, x)
+		}
 	}
-	f.Fuzz(func(t *testing.T, x uint32) {
-		const capacity = 16
+	f.Fuzz(func(t *testing.T, capacity int, x uint32) {
 		queue := NewBounded[int](capacity)
 		var invariant []int
 		for i := 1; i <= 32; i++ {
@@ -49,11 +50,12 @@ func FuzzBoundedPushPop(f *testing.F) {
 }
 
 func FuzzBoundedPushSomePopSome(f *testing.F) {
-	for _, x := range bitmaps {
-		f.Add(x)
+	for _, capacity := range []int{1, 2, 4, 8, 16, 32} {
+		for _, x := range bitmaps {
+			f.Add(capacity, x)
+		}
 	}
-	f.Fuzz(func(t *testing.T, x uint32) {
-		const capacity = 16
+	f.Fuzz(func(t *testing.T, capacity int, x uint32) {
 		queue := NewBounded[int](capacity)
 		invariant := make([]int, 0)
 		for x > 0 {

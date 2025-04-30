@@ -14,7 +14,7 @@ import (
 )
 
 func FuzzBlockingBoundedPushPop(f *testing.F) {
-	for _, capacity := range []int{2, 4, 8, 16, 32} {
+	for _, capacity := range []int{1, 2, 4, 8, 16, 32} {
 		for _, x := range bitmaps {
 			f.Add(capacity, x)
 		}
