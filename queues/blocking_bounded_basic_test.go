@@ -24,7 +24,6 @@ func (s *BlockingBoundedBasicTestSuite) TestNonPositiveCapPanic() {
 	s.Require().PanicsWithError("queues: capacity must be a positive integer value but -1 is given", func() { NewBlockingBounded[int](-1) })
 }
 
-
 func (s *BlockingBoundedBasicTestSuite) TestPushPop() {
 	queue := NewBlockingBounded[int](2)
 	queue.Push(42)
@@ -224,33 +223,10 @@ func (s *BlockingBoundedBasicTestSuite) TestPushToAClosed() {
 func (s *BlockingBoundedBasicTestSuite) TestBlockingPushToAClosed() {
 	queue := NewBlockingBounded[int](1)
 	queue.Push(42)
-
-	var (
-		panicked bool
-		err      any
-	)
-
-	s.goCapturePanic(func() { queue.Push(43) }, &panicked, &err)
-
-	s.Require().Never(func() bool {
-		s.mu.RLock()
-		ok := panicked
-		s.mu.RUnlock()
-		return ok
-	}, 200*time.Millisecond, 10*time.Millisecond, "Push panicked unexpectedly")
-
+	cap := internal.GoCapture(func() { queue.Push(43) })
+	s.Require().Never(cap.IsPanicked, 200*time.Millisecond, 10*time.Millisecond, "Push panicked unexpectedly")
 	queue.Close()
-
-	s.Require().Eventually(func() bool {
-		s.mu.RLock()
-		ok := panicked
-		s.mu.RUnlock()
-		return ok
-	}, 200*time.Millisecond, 10*time.Millisecond, "Push did not panic as was expected")
-}
-
-func (s *BlockingBoundedBasicTestSuite) goCapturePanic(f func(), panickedPtr *bool, errPtr *any) {
-	internal.GoCapturePanic(f, &s.mu, panickedPtr, errPtr)
+	s.Require().Eventually(cap.IsPanicked, 200*time.Millisecond, 10*time.Millisecond, "Push did not panic as was expected")
 }
 
 func TestBlockingBoundedBasic(t *testing.T) {

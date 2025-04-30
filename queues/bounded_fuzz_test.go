@@ -10,19 +10,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var bitmaps []uint32
-
-func init() {
-	for i := 0; i <= 32; i++ {
-		x := uint32(1)<<i - 1
-		bitmaps = append(bitmaps, x) // 0b1, 0b11, 0b111, 0b1111 ...
-		for j := 1; j < 32-i; j++ {
-			x <<= 1
-			bitmaps = append(bitmaps, x) // 0b1..10, 0b1..100, 0b1..1000, ...
-		}
-	}
-}
-
 func FuzzBoundedPushPop(f *testing.F) {
 	for _, x := range bitmaps {
 		f.Add(x)
