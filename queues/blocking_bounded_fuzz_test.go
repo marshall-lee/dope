@@ -147,3 +147,64 @@ func FuzzBlockingBoundedPushPop(f *testing.F) {
 		}
 	})
 }
+
+func FuzzBlockingBoundedPushAllWithPopSomeLoop(f *testing.F) {
+	for _, capacity := range []int{1, 2, 4, 8, 16, 32} {
+		for _, x := range bitmaps {
+			f.Add(capacity, x)
+		}
+	}
+	f.Fuzz(func(t *testing.T, capacity int, x uint32) {
+		queue := NewBlockingBounded[int](capacity)
+
+		var (
+			pushs       []internal.GoroutineCapture[struct{}]
+			invariant   []int
+			expectation []int
+		)
+		consumer := internal.GoCapture(func() {
+			var data [2]int
+			for {
+				n := queue.PopSome(data[:])
+				if n == 0 {
+					break
+				}
+				invariant = append(invariant, data[:n]...)
+			}
+		})
+
+		for i := 1; i <= 32; i++ {
+			expectation = append(expectation, i)
+		}
+
+		for i := 1; i <= 32; {
+			var data1, data0 []int
+
+			for ; x&1 == 1; i++ {
+				data1 = append(data1, i)
+				x >>= 1
+			}
+			if data1 != nil {
+				pushs = append(pushs, internal.GoCapture(func() { queue.PushAll(data1) }))
+			}
+
+			for ; x&1 == 0 && i <= 32; i++ {
+				data0 = append(data0, i)
+				x >>= 1
+			}
+			if data0 != nil {
+				pushs = append(pushs, internal.GoCapture(func() { queue.PushAll(data0) }))
+			}
+		}
+
+		for _, push := range pushs {
+			require.Eventually(t, push.IsDone, 50*time.Millisecond, 10*time.Microsecond, "PushAll did not return")
+		}
+
+		queue.Close()
+
+		require.Eventually(t, consumer.IsDone, 50*time.Millisecond, 10*time.Microsecond, "PopSome loop did not return")
+		slices.Sort(invariant)
+		require.Equal(t, expectation, invariant)
+	})
+}
