@@ -23,3 +23,15 @@ func TestIs(t *testing.T) {
 	require.True(t, Is[mystruct](mystruct{}))
 	require.False(t, Is[mystruct](anotherstruct{}))
 }
+
+func TestIsEmpty(t *testing.T) {
+	type mystruct struct{
+		flag bool
+	}
+	require.True(t, IsEmpty[string](""))
+	require.False(t, IsEmpty[string]("str"))
+	require.True(t, IsEmpty[int](0))
+	require.False(t, IsEmpty[int](123))
+	require.True(t, IsEmpty[mystruct](mystruct{}))
+	require.False(t, IsEmpty[mystruct](mystruct{flag: true}))
+}

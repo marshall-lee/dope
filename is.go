@@ -9,3 +9,9 @@ func Is[T any](val any) bool {
 	_, ok := val.(T)
 	return ok
 }
+
+// IsEmpty checks that a value is equal to an empty value of a given comparable (generic) type.
+func IsEmpty[T comparable](val T) bool {
+	var empty T
+	return val == empty
+}
