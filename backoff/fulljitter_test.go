@@ -13,7 +13,7 @@ import (
 
 func TestFullJitter(t *testing.T) {
 	base := time.Millisecond
-	backoff := FullJitter(base, time.Second)
+	backoff := NewFullJitter(base, time.Second)
 	exp := base
 	for i := 0; i < 10; i++ {
 		next := backoff.Next()
@@ -26,7 +26,7 @@ func TestFullJitter(t *testing.T) {
 func TestFullJitterBiggerBase(t *testing.T) {
 	base := 200 * time.Millisecond
 	cap := 100 * time.Millisecond
-	backoff := FullJitter(base, cap)
+	backoff := NewFullJitter(base, cap)
 	for i := 0; i < 10; i++ {
 		next := backoff.Next()
 		require.GreaterOrEqual(t, next, time.Duration(0))

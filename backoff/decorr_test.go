@@ -14,7 +14,7 @@ import (
 func TestDecorr(t *testing.T) {
 	base := 100 * time.Millisecond
 	cap := 500 * time.Millisecond
-	backoff := Decorr(base, cap)
+	backoff := NewDecorr(base, cap)
 	for i := 0; i < 100; i++ {
 		next := backoff.Next()
 		require.GreaterOrEqual(t, next, base)
@@ -25,7 +25,7 @@ func TestDecorr(t *testing.T) {
 func TestDecorrBiggerBase(t *testing.T) {
 	base := 500 * time.Millisecond
 	cap := 100 * time.Millisecond
-	backoff := Decorr(base, cap)
+	backoff := NewDecorr(base, cap)
 	for i := 0; i < 100; i++ {
 		require.Equal(t, cap, backoff.Next())
 	}

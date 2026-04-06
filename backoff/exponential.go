@@ -6,14 +6,14 @@ package backoff
 
 import "time"
 
-// Exponential is a simple exponential backoff implementation.
+// Exponential backoff is a well-known algorithm.
 // Starting with base, each next delay is twice long but
 // is no more than the cap value.
 //
 // Please note that in practice you should choose the base lower than
 // the cap. Otherwise, the algorithm would emit constant values which is
 // probably not what you wanted.
-func Exponential(base, cap time.Duration) Algorithm {
+func NewExponential(base, cap time.Duration) Algorithm {
 	if base >= cap {
 		return constant{base: cap}
 	}

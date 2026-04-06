@@ -18,7 +18,7 @@ import (
 // Please note that in practice you should choose the base lower than
 // the cap. Otherwise, the algorithm would emit constant values which is
 // probably not what you wanted.
-func Decorr(base, cap time.Duration) Algorithm {
+func NewDecorr(base, cap time.Duration) Algorithm {
 	if base >= cap {
 		return constant{base: cap}
 	}

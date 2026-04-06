@@ -12,7 +12,7 @@ import (
 )
 
 func TestExponential(t *testing.T) {
-	backoff := Exponential(100*time.Millisecond, time.Second)
+	backoff := NewExponential(100*time.Millisecond, time.Second)
 	require.Equal(t, 100*time.Millisecond, backoff.Next())
 	require.Equal(t, 200*time.Millisecond, backoff.Next())
 	require.Equal(t, 400*time.Millisecond, backoff.Next())
@@ -24,7 +24,7 @@ func TestExponential(t *testing.T) {
 func TestExponentialBiggerBase(t *testing.T) {
 	base := 200 * time.Millisecond
 	cap := 100 * time.Millisecond
-	backoff := Exponential(base, cap)
+	backoff := NewExponential(base, cap)
 	for i := 0; i < 10; i++ {
 		require.Equal(t, cap, backoff.Next())
 	}

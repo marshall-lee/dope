@@ -20,7 +20,7 @@ import (
 // the algorithm simply won't have a room to grow. So the base will be
 // ignored and you simply get a degraded version of the algorithm
 // that emits random values in a fixed range.
-func FullJitter(base, cap time.Duration) Algorithm {
+func NewFullJitter(base, cap time.Duration) Algorithm {
 	current := base
 	if current > cap {
 		current = cap
